@@ -1,0 +1,9 @@
+---
+pid: 15164
+cwd: |
+  C:\Users\rohan
+---
+PS C:\Users\rohan>
+ *  History restored 
+
+PS C:\Users\rohan>
