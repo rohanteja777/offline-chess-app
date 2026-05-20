@@ -11,7 +11,6 @@ type SoundKind =
   | "check"
   | "castle"
   | "promote"
-  | "victory"
   | "undo";
 
 /** Lichess standard set has no Castle/Promote MP3s — reuse move/capture clips. */
@@ -21,7 +20,6 @@ const SAMPLE_PATHS: Record<SoundKind, string> = {
   check: "/sounds/check.mp3",
   castle: "/sounds/move.mp3",
   promote: "/sounds/capture.mp3",
-  victory: "/sounds/victory.mp3",
   undo: "/sounds/move.mp3"
 };
 
@@ -119,7 +117,59 @@ async function resumeAudioContext(): Promise<void> {
   }
 }
 
-/** Short wooden tap (Chess.com-like) via filtered noise — works offline. */
+/** Soft bell note — used for checkmate / draw (Chess.com-style, not UI "confirm" clicks). */
+function playBellNote(
+  frequency: number,
+  startOffsetSec: number,
+  durationSec: number,
+  volume = 0.45
+): void {
+  const ctx = getAudioContext();
+  const now = ctx.currentTime + startOffsetSec;
+  const peak = Math.min(volume * MASTER_VOLUME, 1);
+
+  const osc = ctx.createOscillator();
+  osc.type = "sine";
+  osc.frequency.value = frequency;
+
+  const harmonic = ctx.createOscillator();
+  harmonic.type = "sine";
+  harmonic.frequency.value = frequency * 2;
+
+  const gain = ctx.createGain();
+  const harmGain = ctx.createGain();
+  harmGain.gain.value = 0.22;
+
+  gain.gain.setValueAtTime(0.0001, now);
+  gain.gain.exponentialRampToValueAtTime(peak, now + 0.012);
+  gain.gain.exponentialRampToValueAtTime(0.0001, now + durationSec);
+
+  osc.connect(gain);
+  harmonic.connect(harmGain);
+  harmGain.connect(gain);
+  gain.connect(ctx.destination);
+
+  osc.start(now);
+  harmonic.start(now);
+  osc.stop(now + durationSec);
+  harmonic.stop(now + durationSec);
+}
+
+/** Ascending major arpeggio — clear "game won" feel. */
+function playCheckmateFanfare(): void {
+  const notes = [523.25, 659.25, 783.99, 1046.5];
+  notes.forEach((freq, index) => {
+    playBellNote(freq, index * 0.1, 0.28, 0.5);
+  });
+}
+
+/** Gentle two-note ending for draws. */
+function playDrawEndChime(): void {
+  playBellNote(440, 0, 0.22, 0.35);
+  playBellNote(392, 0.14, 0.28, 0.3);
+}
+
+/** Short wooden tap for moves — works offline. */
 function playWoodTap(options: {
   pitchHz?: number;
   durationSec?: number;
@@ -206,17 +256,6 @@ function playWood(kind: SoundKind): void {
     case "promote":
       playWoodTap({ pitchHz: 950, durationSec: 0.09, volume: 1.1 });
       break;
-    case "victory":
-      playWoodTap({ pitchHz: 600, durationSec: 0.1, volume: 1.2 });
-      window.setTimeout(
-        () => playWoodTap({ pitchHz: 800, durationSec: 0.1, volume: 1.1 }),
-        90
-      );
-      window.setTimeout(
-        () => playWoodTap({ pitchHz: 1000, durationSec: 0.12, volume: 1.15 }),
-        180
-      );
-      break;
     case "undo":
       playWoodTap({ pitchHz: 900, durationSec: 0.05, volume: 0.75 });
       break;
@@ -224,8 +263,6 @@ function playWood(kind: SoundKind): void {
 }
 
 function resolveMoveSound(game: Chess, move: Move): SoundKind {
-  if (game.isCheckmate()) return "victory";
-  if (game.isStalemate() || game.isDraw()) return "victory";
   if (move.flags.includes("p")) return "promote";
   if (move.flags.includes("k") || move.flags.includes("q")) return "castle";
   if (move.captured) return "capture";
@@ -236,6 +273,17 @@ function resolveMoveSound(game: Chess, move: Move): SoundKind {
 export async function playMoveSound(game: Chess, move: Move): Promise<void> {
   if (!soundEnabled) return;
   await resumeAudioContext();
+
+  if (game.isCheckmate()) {
+    playCheckmateFanfare();
+    return;
+  }
+
+  if (game.isStalemate() || game.isDraw()) {
+    playDrawEndChime();
+    return;
+  }
+
   playWood(resolveMoveSound(game, move));
 }
 

@@ -60,3 +60,4 @@ PS C:\Users\rohan\.cursor\projects\empty-window> npm run dev
  GET / 200 in 131ms
  ✓ Compiled in 317ms (588 modules)
  ✓ Compiled in 195ms (588 modules)
+ ✓ Compiled in 480ms (588 modules)

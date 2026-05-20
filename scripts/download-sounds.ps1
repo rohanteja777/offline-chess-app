@@ -7,11 +7,11 @@ New-Item -ItemType Directory -Force -Path $outDir | Out-Null
 
 $base = "https://raw.githubusercontent.com/lichess-org/lila/master/public/sound/standard"
 
+# End-game sounds use synthesized chimes in code (no victory.mp3 needed).
 $downloads = @{
-  "move.mp3"        = "Move.mp3"
-  "capture.mp3"     = "Capture.mp3"
-  "check.mp3"       = "Check.mp3"
-  "victory.mp3"     = "Confirmation.mp3"
+  "move.mp3"    = "Move.mp3"
+  "capture.mp3" = "Capture.mp3"
+  "check.mp3"   = "Check.mp3"
 }
 
 foreach ($entry in $downloads.GetEnumerator()) {
