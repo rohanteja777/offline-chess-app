@@ -4,7 +4,9 @@ type GameControlsProps = {
   onNewGame: () => void;
   onUndoMove: () => void;
   onFlipBoard: () => void;
+  onToggleSound: () => void;
   canUndo: boolean;
+  soundOn: boolean;
 };
 
 const baseButtonStyle =
@@ -14,7 +16,9 @@ export default function GameControls({
   onNewGame,
   onUndoMove,
   onFlipBoard,
-  canUndo
+  onToggleSound,
+  canUndo,
+  soundOn
 }: GameControlsProps) {
   return (
     <div className="flex flex-wrap gap-3">
@@ -39,6 +43,14 @@ export default function GameControls({
         className={`${baseButtonStyle} bg-slate-700 text-slate-100 hover:bg-slate-600`}
       >
         Flip Board
+      </button>
+      <button
+        type="button"
+        onClick={onToggleSound}
+        className={`${baseButtonStyle} bg-slate-700 text-slate-100 hover:bg-slate-600`}
+        aria-pressed={soundOn}
+      >
+        {soundOn ? "Sound On" : "Sound Off"}
       </button>
     </div>
   );

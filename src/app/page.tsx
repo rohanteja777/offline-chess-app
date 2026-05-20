@@ -15,10 +15,12 @@ export default function HomePage() {
     boardOrientation,
     moveHistory,
     canUndo,
+    soundOn,
     makeMove,
     newGame,
     undoMove,
-    flipBoard
+    flipBoard,
+    toggleSound
   } = useChessGame();
 
   const handleDrop = (sourceSquare: string, targetSquare: string): boolean => {
@@ -45,7 +47,9 @@ export default function HomePage() {
             onNewGame={newGame}
             onUndoMove={undoMove}
             onFlipBoard={flipBoard}
+            onToggleSound={toggleSound}
             canUndo={canUndo}
+            soundOn={soundOn}
           />
         </section>
 

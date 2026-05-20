@@ -3,6 +3,13 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Chess, Color, Move, Square } from "chess.js";
 import {
+  initSoundPreference,
+  isSoundEnabled,
+  playMoveSound,
+  playUndoSound,
+  setSoundEnabled
+} from "@/lib/chessSounds";
+import {
   clearSavedGame,
   loadSavedGame,
   saveGame
@@ -38,10 +45,14 @@ export function useChessGame() {
   const [boardOrientation, setBoardOrientation] = useState<"white" | "black">(
     "white"
   );
+  const [soundOn, setSoundOn] = useState(true);
   // Avoid writing default state over saved data before restore finishes.
   const [hasRestored, setHasRestored] = useState(false);
 
   useEffect(() => {
+    initSoundPreference();
+    setSoundOn(isSoundEnabled());
+
     const saved = loadSavedGame();
     if (saved) {
       const restored = createGameFromFen(saved.fen);
@@ -64,22 +75,37 @@ export function useChessGame() {
     });
   }, [game, boardOrientation, hasRestored]);
 
+  const toggleSound = useCallback(() => {
+    setSoundOn((prev) => {
+      const next = !prev;
+      setSoundEnabled(next);
+      return next;
+    });
+  }, []);
+
   const makeMove = useCallback((from: Square, to: Square): boolean => {
-    let moveMade = false;
+    let playedMove: Move | null = null;
+    let resultGame: Chess | null = null;
 
     setGame((currentGame) => {
-      // Clone state before mutating so React gets a new object reference.
       const nextGame = new Chess(currentGame.fen());
       const move = nextGame.move({ from, to, promotion: "q" });
 
-      if (move) {
-        moveMade = true;
+      if (!move) {
+        return currentGame;
       }
 
+      playedMove = move;
+      resultGame = nextGame;
       return nextGame;
     });
 
-    return moveMade;
+    if (playedMove && resultGame) {
+      void playMoveSound(resultGame, playedMove);
+      return true;
+    }
+
+    return false;
   }, []);
 
   const newGame = useCallback(() => {
@@ -90,11 +116,23 @@ export function useChessGame() {
   }, []);
 
   const undoMove = useCallback(() => {
+    let didUndo = false;
+
     setGame((currentGame) => {
       const nextGame = new Chess(currentGame.fen());
-      nextGame.undo();
+      const undone = nextGame.undo();
+
+      if (!undone) {
+        return currentGame;
+      }
+
+      didUndo = true;
       return nextGame;
     });
+
+    if (didUndo) {
+      void playUndoSound();
+    }
   }, []);
 
   const flipBoard = useCallback(() => {
@@ -111,9 +149,11 @@ export function useChessGame() {
     boardOrientation,
     moveHistory,
     canUndo: moveHistory.length > 0,
+    soundOn,
     makeMove,
     newGame,
     undoMove,
-    flipBoard
+    flipBoard,
+    toggleSound
   };
 }

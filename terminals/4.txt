@@ -1,0 +1,6 @@
+---
+pid: 7124
+cwd: |
+  C:\Users\rohan
+---
+PS C:\Users\rohan> 
