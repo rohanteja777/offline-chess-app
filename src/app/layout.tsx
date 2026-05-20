@@ -4,8 +4,9 @@ import "./globals.css";
 // Use your live Vercel URL so OG previews resolve correctly.
 const siteUrl = "https://offline-chess-rohanteja.vercel.app";
 
+const ogTitle = "Offline Chess — Play Free Chess in Your Browser Now";
 const description =
-  "Play chess in your browser with drag-and-drop legal moves, move history, undo, and board flip. A fast, minimal offline-style chess board built with Next.js and chess.js.";
+  "Play free chess in your browser with legal moves, move history, undo, and board flip. Fast, minimal, and works offline after load.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -21,7 +22,7 @@ export const metadata: Metadata = {
     type: "website",
     url: siteUrl,
     siteName: "Offline Chess",
-    title: "Offline Chess — Play in Your Browser",
+    title: ogTitle,
     description,
     locale: "en_US",
     images: [
@@ -35,7 +36,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Offline Chess — Play in Your Browser",
+    title: ogTitle,
     description,
     images: ["/opengraph-image"]
   },
