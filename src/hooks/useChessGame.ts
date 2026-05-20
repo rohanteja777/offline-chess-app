@@ -1,7 +1,12 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Chess, Color, Move, Square } from "chess.js";
+import {
+  clearSavedGame,
+  loadSavedGame,
+  saveGame
+} from "@/lib/gameStorage";
 
 export type GameStatus =
   | "ongoing"
@@ -20,11 +25,44 @@ const getStatus = (game: Chess): GameStatus => {
 
 const formatTurn = (turn: Color) => (turn === "w" ? "White" : "Black");
 
+const createGameFromFen = (fen: string): Chess | null => {
+  try {
+    return new Chess(fen);
+  } catch {
+    return null;
+  }
+};
+
 export function useChessGame() {
   const [game, setGame] = useState(() => new Chess());
   const [boardOrientation, setBoardOrientation] = useState<"white" | "black">(
     "white"
   );
+  // Avoid writing default state over saved data before restore finishes.
+  const [hasRestored, setHasRestored] = useState(false);
+
+  useEffect(() => {
+    const saved = loadSavedGame();
+    if (saved) {
+      const restored = createGameFromFen(saved.fen);
+      if (restored) {
+        setGame(restored);
+        setBoardOrientation(saved.boardOrientation);
+      } else {
+        clearSavedGame();
+      }
+    }
+    setHasRestored(true);
+  }, []);
+
+  useEffect(() => {
+    if (!hasRestored) return;
+
+    saveGame({
+      fen: game.fen(),
+      boardOrientation
+    });
+  }, [game, boardOrientation, hasRestored]);
 
   const makeMove = useCallback((from: Square, to: Square): boolean => {
     let moveMade = false;
@@ -45,7 +83,10 @@ export function useChessGame() {
   }, []);
 
   const newGame = useCallback(() => {
-    setGame(new Chess());
+    const freshGame = new Chess();
+    setGame(freshGame);
+    setBoardOrientation("white");
+    saveGame({ fen: freshGame.fen(), boardOrientation: "white" });
   }, []);
 
   const undoMove = useCallback(() => {
