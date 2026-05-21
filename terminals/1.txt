@@ -1,63 +1,9 @@
 ---
-pid: 3024
+pid: 2888
 cwd: |
-  C:\Users\rohan\.cursor\projects\empty-window
-active_command: npm run dev
-last_command: |
-  cd C:\Users\rohan\.cursor\projects\empty-window
-last_exit_code: 0
+  C:\Users\rohan
 ---
-PS C:\Users\rohan> cd C:\Users\rohan\.cursor\projects\empty-window
-PS C:\Users\rohan\.cursor\projects\empty-window> npm run dev
+PS C:\Users\rohan>
+ *  History restored 
 
-> offline-chess-app@1.0.0 dev
-> next dev
-
-   ▲ Next.js 15.5.18
-   - Local:        http://localhost:3000
-   - Network:      http://192.168.55.104:3000
-
- ✓ Starting...
- ✓ Ready in 4.2s
- ○ Compiling / ...
- ✓ Compiled / in 2.6s (589 modules)
- GET / 200 in 3074ms
- GET / 200 in 71ms
- GET / 200 in 52ms
- GET / 200 in 205ms
- GET / 200 in 100ms
- GET / 200 in 54ms
- GET / 200 in 82ms
- GET / 200 in 56ms
- GET / 200 in 69ms
- GET / 200 in 51ms
- GET / 200 in 50ms
- GET / 200 in 61ms
- GET / 200 in 50ms
- GET / 200 in 53ms
- GET / 200 in 47ms
- GET / 200 in 57ms
- GET / 200 in 44ms
- GET / 200 in 55ms
- GET / 200 in 54ms
- GET / 200 in 55ms
- ✓ Compiled in 518ms (588 modules)
- GET / 200 in 145ms
- ✓ Compiled in 391ms (588 modules)
- GET / 200 in 94ms
- ✓ Compiled in 193ms (588 modules)
- GET / 200 in 80ms
- ✓ Compiled in 201ms (588 modules)
- GET / 200 in 70ms
- ✓ Compiled in 172ms (588 modules)
- GET / 200 in 68ms
- ✓ Compiled in 161ms (588 modules)
- GET / 200 in 77ms
- ✓ Compiled in 147ms (588 modules)
- GET / 200 in 72ms
- GET / 200 in 163ms
- ✓ Compiled in 327ms (588 modules)
- GET / 200 in 131ms
- ✓ Compiled in 317ms (588 modules)
- ✓ Compiled in 195ms (588 modules)
- ✓ Compiled in 480ms (588 modules)
+PS C:\Users\rohan> 
