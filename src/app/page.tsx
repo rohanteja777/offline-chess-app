@@ -41,6 +41,7 @@ export default function HomePage() {
             position={fen}
             boardOrientation={boardOrientation}
             onDrop={handleDrop}
+            canPlay={gameStatus === "ongoing" || gameStatus === "check"}
           />
 
           <GameControls
